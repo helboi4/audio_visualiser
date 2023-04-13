@@ -28,10 +28,9 @@
 }
 
 #fileupload{
-    width: 30%;
-    margin: 50px auto;
+    position: absolute;
+    top:150px;
     color: white;
     z-index: 100;
-    display: block;
 
 }
