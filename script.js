@@ -22,7 +22,7 @@ file.addEventListener("change", function(){
     analyser = audioCtx.createAnalyser();
     audioSource.connect(analyser);
     analyser.connect(audioCtx.destination);
-    analyser.fftSize = 64;
+    analyser.fftSize = 2048;
     //number of bars in our visualiser (half of fftSize)
     const bufferLength = analyser.frequencyBinCount;
     //array for unassigned 8 bit integers
@@ -50,12 +50,18 @@ file.addEventListener("change", function(){
 function drawVisualiser(bufferLength, x, barWidth, barHeight, dataArray){
     for(let i = 0; i < bufferLength; i++){
         //setting height to volume of frequency
-        barHeight = dataArray[i] * 2;
+        barHeight = dataArray[i] * 2 ;
+        //time to rotate the canvas to make a circular visualiser
+        ctx.save();
+        ctx.translate(canvas.width/2, canvas.height/2);
+        ctx.rotate(i + Math.PI * 2 / bufferLength);
         const red = i * barHeight/20;
-        const green = i*4;
+        const green = i*2;
         const blue = barHeight/2;
         ctx.fillStyle = "rgb(" + red + "," + green + "," + blue + ")";
-        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+        ctx.fillRect(0, 0, barWidth,  barHeight);
         x+=barWidth;
+        //restore canvas to original position
+        ctx.restore();
     }
 }
