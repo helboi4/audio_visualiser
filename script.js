@@ -7,21 +7,24 @@ canvas.height = window.innerHeight;
 const ctx = canvas.getContext("2d");
 let audioSource;
 let analyser;
+//https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Visualizations_with_Web_Audio_API
 
-//TODO: fix issue with file upload button not working
-
+//listen for new file upload
 file.addEventListener("change", function(){
     const files = this.files;
+    //set file as audio and play it
     const audio1 = document.getElementById("audio1");
     audio1.src = URL.createObjectURL(files[0]);
     const audioCtx = new (window.AudioContext || webkitURL.webkitAudio)();
     audio1.load();
     audio1.play();
     
+    //setup analyser
     audioSource = audioCtx.createMediaElementSource(audio1);
     analyser = audioCtx.createAnalyser();
     audioSource.connect(analyser);
     analyser.connect(audioCtx.destination);
+    //fast fourier transformation - basically gets the frequency data and you're choosing sth like the bitrate (must be multiples of 32)
     analyser.fftSize = 1024;
     //number of bars in our visualiser (half of fftSize)
     const bufferLength = analyser.frequencyBinCount;
@@ -55,7 +58,7 @@ function drawVisualiser(bufferLength, x, barWidth, barHeight, dataArray){
         ctx.save();
         ctx.translate(canvas.width/2, canvas.height/2);
         ctx.rotate(i * Math.PI * 8 / bufferLength);
-        //if you make hue = i * 15 you get a rainbow visualiser
+        //if you make hue = i * 15 you get the spectrum of the rainbow around the circle
         const hue = i * 5;
         ctx.fillStyle = "hsl(" + hue + ", 100%, 50%)";
         ctx.fillRect(0, 0, barWidth,  barHeight);
